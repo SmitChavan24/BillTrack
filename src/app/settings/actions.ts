@@ -14,6 +14,7 @@ export async function saveSettings(_prev: unknown, formData: FormData) {
 
   const full_name = String(formData.get("full_name") ?? "").trim();
   const upi_id = String(formData.get("upi_id") ?? "").trim();
+  const handleRaw = String(formData.get("handle") ?? "").trim().toLowerCase();
   const personas = formData
     .getAll("personas")
     .map(String)
@@ -26,12 +27,42 @@ export async function saveSettings(_prev: unknown, formData: FormData) {
     return { error: "UPI ID should look like name@bank." };
   }
 
+  // Public page handle (optional). 3–30 chars: letters, numbers, hyphens; must
+  // start and end alphanumeric. Empty clears it.
+  const RESERVED = ["admin", "billtrack", "support", "help", "app", "api"];
+  let handle: string | null = null;
+  if (handleRaw) {
+    if (!/^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/.test(handleRaw)) {
+      return { error: "Page link must be 3–30 letters, numbers or hyphens." };
+    }
+    if (RESERVED.includes(handleRaw)) {
+      return { error: "That page link is reserved — try another." };
+    }
+    handle = handleRaw;
+  }
+
+  const langRaw = String(formData.get("language") ?? "en");
+  const language: "en" | "hi" | "hinglish" =
+    langRaw === "hi" || langRaw === "hinglish" ? langRaw : "en";
+
   const { error } = await supabase
     .from("profiles")
-    .update({ full_name, upi_id, personas, primary_persona: personas[0] })
+    .update({
+      full_name,
+      upi_id,
+      handle,
+      language,
+      personas,
+      primary_persona: personas[0],
+    })
     .eq("id", user.id);
 
-  if (error) return { error: error.message };
+  if (error) {
+    if (error.code === "23505") {
+      return { error: "That page link is already taken — try another." };
+    }
+    return { error: error.message };
+  }
 
   revalidatePath("/", "layout");
   return { saved: true };

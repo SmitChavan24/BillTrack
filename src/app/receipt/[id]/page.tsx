@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { formatINR } from "@/lib/bills";
 import ShareAppButton from "@/components/ShareAppButton";
 import ReceiptActions from "@/components/ReceiptActions";
+import GetBillTrackCTA from "@/components/GetBillTrackCTA";
 
 export const dynamic = "force-dynamic";
 
@@ -130,6 +131,7 @@ export default async function ReceiptByIdPage({
           <p className="mt-1 text-xs font-medium text-slate-500">
             🛡️ Secured by BillTrack
           </p>
+          <GetBillTrackCTA />
           <ShareAppButton />
         </div>
         

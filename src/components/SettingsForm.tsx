@@ -14,6 +14,17 @@ export default function SettingsForm({ profile }: { profile: Profile }) {
   const [selected, setSelected] = useState<Set<PersonaKey>>(
     new Set(profile.personas ?? []),
   );
+  const [copied, setCopied] = useState(false);
+
+  function copyPageLink() {
+    if (!profile.handle) return;
+    navigator.clipboard
+      ?.writeText(`https://billtrack.me/u/${profile.handle}`)
+      .then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1500);
+      });
+  }
 
   function toggle(key: PersonaKey) {
     setSelected((prev) => {
@@ -41,6 +52,71 @@ export default function SettingsForm({ profile }: { profile: Profile }) {
         <p className="text-xs text-slate-400">
           This UPI ID is embedded in every WhatsApp reminder and pay link so your
           payers can pay you instantly.
+        </p>
+      </section>
+
+      <section className="space-y-3 rounded-2xl border border-slate-200 bg-white p-5">
+        <h2 className="text-sm font-semibold text-slate-700">
+          Your public pay page
+        </h2>
+        <label className="block">
+          <span className="mb-1.5 block text-sm font-medium text-slate-700">
+            Page link
+          </span>
+          <div className="flex items-center rounded-xl border border-slate-200 bg-white px-3 focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-100">
+            <span className="whitespace-nowrap text-sm text-slate-400">
+              billtrack.me/u/
+            </span>
+            <input
+              name="handle"
+              defaultValue={profile.handle ?? ""}
+              placeholder="your-shop"
+              className="w-full bg-transparent px-1 py-3 text-sm outline-none"
+            />
+          </div>
+        </label>
+        <p className="text-xs text-slate-400">
+          Share this one link anywhere — customers open it and pay you via UPI,
+          and discover BillTrack for their own business. 3–30 letters, numbers
+          or hyphens.
+        </p>
+        {profile.handle && (
+          <button
+            type="button"
+            onClick={copyPageLink}
+            className="flex w-full items-center justify-between rounded-xl border border-brand-200 bg-brand-50 px-4 py-3 text-sm transition hover:bg-brand-100"
+          >
+            <span className="truncate font-medium text-brand-700">
+              billtrack.me/u/{profile.handle}
+            </span>
+            <span className="ml-3 shrink-0 font-semibold text-brand-600">
+              {copied ? "Copied!" : "Copy"}
+            </span>
+          </button>
+        )}
+      </section>
+
+      <section className="space-y-3 rounded-2xl border border-slate-200 bg-white p-5">
+        <h2 className="text-sm font-semibold text-slate-700">
+          Reminder language
+        </h2>
+        <label className="block">
+          <span className="mb-1.5 block text-sm font-medium text-slate-700">
+            Language for WhatsApp reminders &amp; receipts
+          </span>
+          <select
+            name="language"
+            defaultValue={profile.language ?? "en"}
+            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+          >
+            <option value="en">English</option>
+            <option value="hi">हिंदी (Hindi)</option>
+            <option value="hinglish">Hinglish</option>
+          </select>
+        </label>
+        <p className="text-xs text-slate-400">
+          Your reminder and receipt messages will be written in this language —
+          pick what your customers read most comfortably.
         </p>
       </section>
 

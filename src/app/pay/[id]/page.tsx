@@ -7,6 +7,7 @@ import { formatINR } from "@/lib/bills";
 import CopyUpi from "@/components/CopyUpi";
 import PaidButton from "@/components/PaidButton";
 import ShareAppButton from "@/components/ShareAppButton";
+import GetBillTrackCTA from "@/components/GetBillTrackCTA";
 
 export const dynamic = "force-dynamic";
 
@@ -187,6 +188,7 @@ export default async function PayByIdPage({
           <p className="mt-1 text-xs font-medium text-slate-500">
             🛡️ Secured by BillTrack
           </p>
+          <GetBillTrackCTA />
           <ShareAppButton />
         </div>
       </div>

@@ -7,6 +7,7 @@ import { PERSONAS, type PersonaKey } from "@/lib/personas";
 import { effectiveStatus } from "@/lib/bills";
 import StatsBar from "./StatsBar";
 import BillCard from "./BillCard";
+import MyPublicPageCard from "./MyPublicPageCard";
 
 type Filter = PersonaKey | "all";
 
@@ -64,6 +65,8 @@ export default function DashboardClient({
         </Link>
       )}
 
+      <MyPublicPageCard handle={profile.handle} />
+
       {personas.length > 1 && (
         <div className="flex gap-2 overflow-x-auto pb-1">
           <Chip active={filter === "all"} onClick={() => setFilter("all")}>
@@ -104,7 +107,13 @@ export default function DashboardClient({
       ) : (
         <div className="space-y-3">
           {visible.map((b) => (
-            <BillCard key={b.id} bill={b} upiId={upiId} payeeName={payeeName} />
+            <BillCard
+              key={b.id}
+              bill={b}
+              upiId={upiId}
+              payeeName={payeeName}
+              language={profile.language ?? "en"}
+            />
           ))}
         </div>
       )}

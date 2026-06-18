@@ -2,6 +2,7 @@ import type { PersonaKey } from "./personas";
 
 export type BillStatus = "pending" | "paid" | "overdue";
 export type RepeatInterval = "none" | "weekly" | "monthly" | "quarterly" | "yearly";
+export type Language = "en" | "hi" | "hinglish";
 
 export interface Bill {
   id: string;
@@ -24,8 +25,10 @@ export interface Profile {
   id: string;
   full_name: string | null;
   upi_id: string | null;
+  handle: string | null;
   personas: PersonaKey[];
   primary_persona: PersonaKey | null;
+  language: Language | null;
   plan: "free" | "paid";
   is_admin: boolean;
   created_at: string;

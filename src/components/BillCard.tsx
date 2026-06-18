@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState, useTransition } from "react";
-import type { Bill } from "@/lib/types";
+import type { Bill, Language } from "@/lib/types";
 import { effectiveStatus, formatINR } from "@/lib/bills";
 import { buildWhatsAppLink, buildPayLink, buildWhatsAppReceiptLink } from "@/lib/whatsapp";
 import { setBillStatus, markReminded, deleteBill, renewBill } from "@/app/bills/actions";
@@ -26,10 +26,12 @@ export default function BillCard({
   bill,
   upiId,
   payeeName,
+  language,
 }: {
   bill: Bill;
   upiId: string;
   payeeName: string;
+  language: Language;
 }) {
   const status = effectiveStatus(bill);
   const [pending, startTransition] = useTransition();
@@ -48,7 +50,7 @@ export default function BillCard({
 
   const ready = !!upiId && !!origin;
   const waLink = ready
-    ? buildWhatsAppLink(bill, bill.category, payeeName, origin, upiId)
+    ? buildWhatsAppLink(bill, bill.category, payeeName, origin, upiId, language)
     : "";
   const payPageLink = origin ? buildPayLink(origin, bill.id) : "";
 
@@ -173,7 +175,7 @@ export default function BillCard({
       {isPaid && (
         <div className={`mt-4 grid gap-2 ${!renewed ? "grid-cols-2" : "grid-cols-1"}`}>
           <a
-            href={origin ? buildWhatsAppReceiptLink(bill, payeeName, origin) : undefined}
+            href={origin ? buildWhatsAppReceiptLink(bill, payeeName, origin, language) : undefined}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center justify-center rounded-xl bg-[#25D366] py-2.5 text-center text-sm font-semibold text-white transition hover:brightness-95"
