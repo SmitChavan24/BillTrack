@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 const SITE_URL = "https://www.billtrack.me";
 const SITE_DESCRIPTION =
-  "BillTrack lets landlords, shopkeepers, tutors and freelancers send free payment reminders on WhatsApp and collect money instantly with UPI pay links. No app, no fees.";
+  "BillTrack lets landlords, shopkeepers, tutors and freelancers send free payment reminders on WhatsApp and collect money instantly with UPI pay links. Free plan, no app to install.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

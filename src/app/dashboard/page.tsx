@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import AppHeader from "@/components/AppHeader";
 import DashboardClient from "@/components/DashboardClient";
+import PlanBanner from "@/components/PlanBanner";
 import type { Bill, Profile } from "@/lib/types";
 
 export default async function DashboardPage() {
@@ -32,6 +33,10 @@ export default async function DashboardPage() {
     <>
       <AppHeader name={profile.full_name} />
       <main className="mx-auto max-w-2xl px-5 py-6">
+        <PlanBanner
+          profile={profile as Profile}
+          activeBills={(bills ?? []).filter((b) => b.status !== "paid").length}
+        />
         <DashboardClient
           bills={(bills ?? []) as Bill[]}
           profile={profile as Profile}

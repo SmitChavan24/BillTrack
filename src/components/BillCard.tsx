@@ -86,6 +86,7 @@ export default function BillCard({
     startTransition(async () => {
       const result = await renewBill(bill.id);
       if (result?.success) setRenewed(true);
+      else if (result?.error) alert(result.error);
     });
   }
 

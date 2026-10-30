@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { FREE_BILL_LIMIT, PRO_PRICE, UPGRADE_URL } from "@/lib/plan";
 
 export const metadata: Metadata = {
   title: "BillTrack — WhatsApp Payment Reminders & UPI Pay Links",
   description:
-    "Send free payment reminders on WhatsApp and collect money instantly with UPI. Built for landlords, shopkeepers, tutors and freelancers in India. No app, no fees.",
+    "Send free payment reminders on WhatsApp and collect money instantly with UPI. Built for landlords, shopkeepers, tutors and freelancers in India. Free plan, no app to install.",
   alternates: { canonical: "/" },
 };
 
@@ -26,8 +27,8 @@ const FEATURES = [
   },
   {
     icon: "🆓",
-    title: "Free & no install",
-    body: "Works right in your browser, on any phone. No app store, no setup fees, no monthly charges.",
+    title: "Free plan, no install",
+    body: "Works right in your browser, on any phone. Start free with up to 10 active bills. No card, no setup fees.",
   },
 ];
 
@@ -62,8 +63,12 @@ const PERSONAS = [
 
 const FAQS = [
   {
-    q: "Is BillTrack really free?",
-    a: "Yes. Sending WhatsApp reminders and generating UPI pay links is completely free. There's no app to install and no monthly charge.",
+    q: "Is BillTrack free?",
+    a: "Yes. The Free plan includes WhatsApp reminders, UPI pay links and up to 10 active (unpaid) bills at a time. For unlimited bills and customers, upgrade to BillTrack Pro for ₹199/month. BillTrack never takes a commission on the payments you collect.",
+  },
+  {
+    q: "How do I pay for BillTrack Pro?",
+    a: "Upgrade at pay.billtrack.me using the email address of your BillTrack account. Payments are processed securely by Razorpay (UPI, cards, netbanking, wallets). Pro is activated on your account within 24 hours and does not renew automatically. Larger businesses can contact us for custom pricing.",
   },
   {
     q: "Do my customers need to install anything?",
@@ -92,7 +97,10 @@ export default function Home() {
         operatingSystem: "Web, Android, iOS",
         description:
           "Send free payment reminders on WhatsApp and collect money instantly with UPI pay links.",
-        offers: { "@type": "Offer", price: "0", priceCurrency: "INR" },
+        offers: [
+          { "@type": "Offer", name: "Free", price: "0", priceCurrency: "INR" },
+          { "@type": "Offer", name: "Pro", price: "199", priceCurrency: "INR", url: UPGRADE_URL },
+        ],
         url: "https://www.billtrack.me",
       },
       {
@@ -127,6 +135,9 @@ export default function Home() {
           <span className="font-bold tracking-tight">BillTrack</span>
         </div>
         <nav className="flex items-center gap-3 text-sm font-medium">
+          <a href="#pricing" className="text-slate-600 hover:text-slate-900">
+            Pricing
+          </a>
           <Link href="/login" className="text-slate-600 hover:text-slate-900">
             Sign in
           </Link>
@@ -143,7 +154,7 @@ export default function Home() {
       {/* Hero */}
       <section className="mx-auto max-w-5xl px-5 pb-12 pt-10 text-center lg:pt-20">
         <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-brand-600">
-          Free for small businesses in India
+          Free plan for small businesses in India
         </p>
         <h1 className="mx-auto max-w-3xl text-3xl font-bold leading-tight tracking-tight sm:text-4xl lg:text-5xl">
           Send payment reminders on WhatsApp. Get paid faster over UPI.
@@ -151,7 +162,7 @@ export default function Home() {
         <p className="mx-auto mt-5 max-w-2xl text-base text-slate-600 lg:text-lg">
           BillTrack helps landlords, shopkeepers, tutors and freelancers chase
           payments without the awkward follow-ups — polite WhatsApp reminders and
-          one-tap UPI pay links, completely free.
+          one-tap UPI pay links. Start free.
         </p>
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Link
@@ -214,6 +225,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <Pricing />
 
       {/* Personas */}
       <section className="bg-slate-50 py-14">
@@ -293,15 +306,78 @@ export default function Home() {
           </div>
           <p>© {new Date().getFullYear()} BillTrack · Made in India 🇮🇳</p>
           <div className="flex gap-4">
-            <Link href="/login" className="hover:text-slate-800">
-              Sign in
-            </Link>
-            <Link href="/signup" className="hover:text-slate-800">
-              Get started
-            </Link>
+            <a href="#pricing" className="hover:text-slate-800">
+              Pricing
+            </a>
+            <a href={`${UPGRADE_URL}/terms`} className="hover:text-slate-800">
+              Terms
+            </a>
+            <a href={`${UPGRADE_URL}/privacy`} className="hover:text-slate-800">
+              Privacy
+            </a>
+            <a href={`${UPGRADE_URL}/refunds`} className="hover:text-slate-800">
+              Refunds
+            </a>
+            <a href={`${UPGRADE_URL}/contact`} className="hover:text-slate-800">
+              Contact
+            </a>
           </div>
         </div>
       </footer>
     </div>
+  );
+}
+
+function Pricing() {
+  return (
+    <section id="pricing" className="py-14">
+      <div className="mx-auto max-w-5xl px-5">
+        <h2 className="text-center text-2xl font-bold tracking-tight">
+          Simple pricing
+        </h2>
+        <p className="mx-auto mt-3 max-w-2xl text-center text-slate-600">
+          Start free. Upgrade when you have more customers to track.
+        </p>
+        <div className="mx-auto mt-10 grid max-w-3xl gap-4 sm:grid-cols-2">
+          <div className="flex flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h3 className="font-semibold text-slate-800">Free</h3>
+            <p className="mt-2 text-3xl font-bold tracking-tight">₹0</p>
+            <ul className="mt-5 flex-1 space-y-2 text-sm text-slate-600">
+              <li>✓ WhatsApp payment reminders</li>
+              <li>✓ UPI pay links and public pay page</li>
+              <li>✓ Track pending, overdue and paid bills</li>
+              <li>✓ Up to {FREE_BILL_LIMIT} active bills at a time</li>
+            </ul>
+            <Link
+              href="/signup"
+              className="mt-6 rounded-xl border border-slate-200 px-5 py-3 text-center font-semibold text-slate-700 transition hover:bg-slate-50"
+            >
+              Create your free account
+            </Link>
+          </div>
+          <div className="flex flex-col rounded-2xl border-2 border-brand-600 bg-white p-6 shadow-sm">
+            <h3 className="font-semibold text-brand-700">Pro</h3>
+            <p className="mt-2 text-3xl font-bold tracking-tight">
+              ₹{PRO_PRICE}
+              <span className="text-base font-normal text-slate-500"> / month</span>
+            </p>
+            <ul className="mt-5 flex-1 space-y-2 text-sm text-slate-600">
+              <li>✓ Everything in Free</li>
+              <li>
+                ✓ <strong>Unlimited bills and customers</strong>
+              </li>
+              <li>✓ Paid month by month, no automatic renewal</li>
+              <li>✓ Custom pricing for larger businesses</li>
+            </ul>
+            <a
+              href={UPGRADE_URL}
+              className="mt-6 rounded-xl bg-brand-600 px-5 py-3 text-center font-semibold text-white transition hover:bg-brand-700"
+            >
+              Upgrade to Pro
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }

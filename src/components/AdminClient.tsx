@@ -2,7 +2,8 @@
 
 import { useMemo, useState, useTransition } from "react";
 import { formatINR } from "@/lib/bills";
-import { replyToFeedback } from "@/app/admin/actions";
+import { replyToFeedback, setUserPlan } from "@/app/admin/actions";
+import { isPro } from "@/lib/plan";
 import type {
   AdminBillRow,
   AdminFeedbackRow,
@@ -144,15 +145,7 @@ function UsersTable({ users }: { users: AdminUserRow[] }) {
                 <div className="text-xs text-slate-400">{u.email || "—"}</div>
               </td>
               <td className="px-4 py-3">
-                <span
-                  className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                    u.plan === "paid"
-                      ? "bg-brand-100 text-brand-700"
-                      : "bg-slate-100 text-slate-600"
-                  }`}
-                >
-                  {u.plan}
-                </span>
+                <PlanCell user={u} />
               </td>
               <td className="px-4 py-3 text-slate-700">{u.bill_count}</td>
               <td className="px-4 py-3 text-slate-700">
@@ -171,6 +164,60 @@ function UsersTable({ users }: { users: AdminUserRow[] }) {
           ))}
         </tbody>
       </table>
+    </div>
+  );
+}
+
+// Pro is bought on pay.billtrack.me; after checking the payment there, the
+// admin switches it on (or extends it) here.
+function PlanCell({ user }: { user: AdminUserRow }) {
+  const [pending, startTransition] = useTransition();
+  const pro = isPro(user);
+
+  function change(plan: "free" | "paid", months = 1) {
+    const label =
+      plan === "paid"
+        ? `Give ${user.email ?? "this user"} Pro for ${months} month(s)?`
+        : `Move ${user.email ?? "this user"} back to Free?`;
+    if (!confirm(label)) return;
+    startTransition(async () => {
+      const result = await setUserPlan(user.id, plan, months);
+      if (result?.error) alert(result.error);
+    });
+  }
+
+  return (
+    <div className="space-y-1">
+      <span
+        className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+          pro ? "bg-brand-100 text-brand-700" : "bg-slate-100 text-slate-600"
+        }`}
+      >
+        {pro ? "Pro" : user.plan === "paid" ? "Pro (expired)" : "Free"}
+      </span>
+      {pro && user.plan_expires_at && (
+        <div className="text-xs text-slate-400">
+          until {fmtDate(user.plan_expires_at)}
+        </div>
+      )}
+      <div className="flex gap-2 text-xs">
+        <button
+          disabled={pending}
+          onClick={() => change("paid", 1)}
+          className="font-medium text-brand-700 hover:underline disabled:opacity-50"
+        >
+          +1 month Pro
+        </button>
+        {pro && (
+          <button
+            disabled={pending}
+            onClick={() => change("free")}
+            className="text-slate-500 hover:underline disabled:opacity-50"
+          >
+            Set Free
+          </button>
+        )}
+      </div>
     </div>
   );
 }

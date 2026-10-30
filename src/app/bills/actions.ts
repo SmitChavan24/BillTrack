@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { PERSONA_KEYS, type PersonaKey } from "@/lib/personas";
+import { friendlyBillError } from "@/lib/plan";
 import type { RepeatInterval } from "@/lib/types";
 
 const REPEAT_VALUES: RepeatInterval[] = ["none", "weekly", "monthly", "quarterly", "yearly"];
@@ -55,7 +56,7 @@ export async function createBill(_prev: unknown, formData: FormData) {
   const { error: dbErr } = await supabase
     .from("bills")
     .insert({ ...bill, user_id: user.id });
-  if (dbErr) return { error: dbErr.message };
+  if (dbErr) return { error: friendlyBillError(dbErr.message) };
 
   revalidatePath("/dashboard");
   redirect("/dashboard");
@@ -179,7 +180,7 @@ export async function renewBill(id: string) {
     parent_bill_id: id,
     status: "pending",
   });
-  if (dbErr) return { error: dbErr.message };
+  if (dbErr) return { error: friendlyBillError(dbErr.message) };
 
   revalidatePath("/dashboard");
   return { success: true };

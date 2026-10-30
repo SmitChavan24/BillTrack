@@ -30,6 +30,7 @@ export interface Profile {
   primary_persona: PersonaKey | null;
   language: Language | null;
   plan: "free" | "paid";
+  plan_expires_at: string | null;
   is_admin: boolean;
   created_at: string;
 }
@@ -52,6 +53,7 @@ export interface AdminUserRow {
   email: string | null;
   upi_id: string | null;
   plan: "free" | "paid";
+  plan_expires_at: string | null;
   primary_persona: PersonaKey | null;
   personas: PersonaKey[];
   is_admin: boolean;
